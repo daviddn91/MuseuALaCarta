@@ -13,6 +13,6 @@ public class ServerActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
         WebView wv = (WebView) findViewById(R.id.webView);
-        wv.loadUrl("http://www.google.es");
+        wv.loadUrl("https://museumalacarte-bustawin.c9.io/artworks");
     }
 }
