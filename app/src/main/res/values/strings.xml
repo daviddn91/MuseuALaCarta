@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Museu a la carta</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="server">Server</string>
+</resources>
