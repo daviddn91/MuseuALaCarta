@@ -20,6 +20,10 @@
             android:name=".ServerActivity"
             android:label="@string/server" >
         </activity>
+        <activity
+            android:name=".PreferidesActivity"
+            android:label="@string/preferides" >
+        </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 
