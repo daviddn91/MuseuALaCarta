@@ -14,29 +14,23 @@
         <Button
             android:layout_width="200dp"
             android:layout_height="75dp"
-            android:text="Server"
+            android:text="Consultar totes les obres"
             android:id="@+id/bServer"
             android:layout_gravity="center_horizontal" />
 
         <Button
             android:layout_width="200dp"
             android:layout_height="75dp"
-            android:text="Consultar obra"
-            android:id="@+id/button4"
+            android:text="Consultar obra per balissa"
+            android:id="@+id/bBalissa"
             android:layout_gravity="center_horizontal" />
 
         <Button
             android:layout_width="200dp"
             android:layout_height="75dp"
-            android:text="Obres preferides"
-            android:id="@+id/button2"
+            android:text="Consultar obres preferides"
+            android:id="@+id/bPreferides"
             android:layout_gravity="center_horizontal" />
 
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="75dp"
-            android:text="Ajuda"
-            android:id="@+id/button3"
-            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </RelativeLayout>
