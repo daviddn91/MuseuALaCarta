@@ -1,8 +1,10 @@
 package com.example.david.museu;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 
