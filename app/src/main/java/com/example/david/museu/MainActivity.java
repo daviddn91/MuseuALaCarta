@@ -28,7 +28,16 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         db=openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS obres_preferides(id INTEGER, nomObra VARCHAR, autorObra VARCHAR, data_afegida Date);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS obres_preferides(id VARCHAR);");
+        db.execSQL("INSERT into obres_preferides(id) values('1')");
+        Button boton2 = (Button) findViewById(R.id.bPreferides);
+        boton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent nuevoform = new Intent(MainActivity.this, PreferidesActivity.class);
+                startActivity(nuevoform);
+            }
+        });
     }
 
 }
