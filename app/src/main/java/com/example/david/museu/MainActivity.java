@@ -13,6 +13,7 @@ import android.nfc.NfcManager;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +21,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,30 +37,14 @@ public class MainActivity extends ActionBarActivity {
 
     SQLiteDatabase db;
     NfcAdapter nfcAdapter;
+    EditText txtTagContent;
+
+    ToggleButton tglReadWrite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //mTextView = (TextView) findViewById(R.id.tview);
-
-        /*
-        mAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        if (mAdapter == null) {
-            // Stop here, we definitely need NFC
-            Toast.makeText(this, "Aquest dispositiu no suporta NFC.", Toast.LENGTH_LONG).show();
-            //finish();
-            return;
-        }
-
-        if (!mAdapter.isEnabled()) {
-            mTextView.setText("NFC apagat.");
-        } else {
-            mTextView.setText("NFC operatiu");
-        }
-        */
 
         // Boton 1
         Button boton = (Button) findViewById(R.id.bServer);
@@ -70,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Crear BD
-        db=openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
+        db = openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
         db.execSQL("CREATE TABLE IF NOT EXISTS obres_preferides(id VARCHAR);");
         db.execSQL("INSERT into obres_preferides(id) values('1')");
 
@@ -86,6 +73,9 @@ public class MainActivity extends ActionBarActivity {
         });
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        tglReadWrite = (ToggleButton) findViewById(R.id.tglReadWrite);
+        txtTagContent = (EditText) findViewById(R.id.txtTagContent);
+
         if (nfcAdapter != null && nfcAdapter.isEnabled()) {
             Toast.makeText(this, "NFC disponible!", Toast.LENGTH_LONG).show();
         } else {
@@ -95,17 +85,46 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Toast.makeText(this, "NFC intent recibido!",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "NFC intent recibido!", Toast.LENGTH_LONG).show();
         super.onNewIntent(intent);
 
-        if (intent.hasExtra((NfcAdapter.EXTRA_TAG)))
-        {
+        if (intent.hasExtra((NfcAdapter.EXTRA_TAG))) {
             Toast.makeText(this, "NfcIntent!", Toast.LENGTH_SHORT).show();
 
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            NdefMessage ndefMessage = createNdefMessage("My string content!");
+            if (tglReadWrite.isChecked())
+            {
+                Parcelable[] parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
-            writeNdefMessage(tag, ndefMessage);
+                if (parcelables != null && parcelables.length > 0)
+                {
+                    readTextFromMessage((NdefMessage) parcelables[0]);
+                } else {
+                    Toast.makeText(this, "No NDEF messages found!", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }else {
+                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                NdefMessage ndefMessage = createNdefMessage(txtTagContent.getText()+"");
+
+                writeNdefMessage(tag, ndefMessage);
+            }
+        }
+    }
+
+    private void readTextFromMessage(NdefMessage ndefMessage) {
+        NdefRecord[] ndefRecords = ndefMessage.getRecords();
+
+        if (ndefRecords != null && ndefRecords.length > 0) {
+
+            NdefRecord ndefRecord = ndefRecords[0];
+
+            String tagContent = getTextFromNdefRecord(ndefRecord);
+
+            txtTagContent.setText(tagContent);
+
+        } else {
+            Toast.makeText(this, "No NDEF records found!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -117,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
 
         disableForegroundDispatchSystem();
@@ -142,8 +161,7 @@ public class MainActivity extends ActionBarActivity {
 
             NdefFormatable ndefFormatable = NdefFormatable.get(tag);
 
-            if(ndefFormatable == null)
-            {
+            if (ndefFormatable == null) {
                 Toast.makeText(this, "Tag is not ndef formatable!", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -155,17 +173,15 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(this, "Tag writen!", Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
-            Log.e("formatTag",e.getMessage());
+            Log.e("formatTag", e.getMessage());
         }
     }
 
-    private void writeNdefMessage(Tag tag, NdefMessage ndefMessage)
-    {
+    private void writeNdefMessage(Tag tag, NdefMessage ndefMessage) {
 
         try {
 
-            if(tag == null)
-            {
+            if (tag == null) {
                 Toast.makeText(this, "Tag object cannot be null", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -175,8 +191,7 @@ public class MainActivity extends ActionBarActivity {
             if (ndef == null) {
                 // format tag with the ndef formate and writes the message
                 formatTag(tag, ndefMessage);
-            }else
-            {
+            } else {
                 ndef.connect();
                 if (!ndef.isWritable()) {
                     Toast.makeText(this, "Tag is not writable", Toast.LENGTH_SHORT).show();
@@ -190,8 +205,8 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(this, "Tag writen!", Toast.LENGTH_SHORT).show();
             }
 
-        }catch (Exception e) {
-            Log.e("writeNdefMessage",e.getMessage());
+        } catch (Exception e) {
+            Log.e("writeNdefMessage", e.getMessage());
         }
 
     }
@@ -212,8 +227,8 @@ public class MainActivity extends ActionBarActivity {
 
             return new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload.toByteArray());
 
-        } catch(UnsupportedEncodingException e) {
-            Log.e("createTextRecord",e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            Log.e("createTextRecord", e.getMessage());
         }
         return null;
     }
@@ -221,8 +236,26 @@ public class MainActivity extends ActionBarActivity {
     private NdefMessage createNdefMessage(String content) {
 
         NdefRecord ndefRecord = createTextRecord(content);
-        NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{ ndefRecord });
+        NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{ndefRecord});
 
         return ndefMessage;
+    }
+
+    public void tglReadWriteOnClick(View view) {
+        txtTagContent.setText("");
+    }
+
+    public String getTextFromNdefRecord(NdefRecord ndefRecord)
+    {
+        String tagContent = null;
+        try {
+            byte[] payload = ndefRecord.getPayload();
+            String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
+            int languageSize = payload[0] & 0063;
+            tagContent = new String(payload, languageSize + 1, payload.length - languageSize - 1, textEncoding);
+        } catch (UnsupportedEncodingException e) {
+            Log.e("getTextFromNdefRecord", e.getMessage(), e);
+        }
+        return tagContent;
     }
 }
