@@ -14,7 +14,7 @@ public class ServerActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
-        WebView wv = (WebView) findViewById(R.id.webView);
-        wv.loadUrl("https://museumalacarte-bustawin.c9.io/artworks");
+        //WebView wv = (WebView) findViewById(R.id.webView);
+        //wv.loadUrl("https://museumalacarte-bustawin.c9.io/artworks");
     }
 }
