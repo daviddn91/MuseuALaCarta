@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 public class MainActivity extends ActionBarActivity {
 
     SQLiteDatabase db;
+    NfcAdapter nfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +81,39 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter != null && nfcAdapter.isEnabled()) {
             Toast.makeText(this, "NFC disponible!", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "NFC no disponible :(", Toast.LENGTH_LONG).show();
         }
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Toast.makeText(this, "NFC intent recibido!",Toast.LENGTH_LONG).show();
+
+        super.onNewIntent(intent);
+    }
+
+    @Override
+    protected void onResume() {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        IntentFilter[] intentFilter= new IntentFilter[]{};
+
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilter, null);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause(){
+
+        nfcAdapter.disableForegroundDispatch(this);
+
+        super.onPause();
     }
 }
