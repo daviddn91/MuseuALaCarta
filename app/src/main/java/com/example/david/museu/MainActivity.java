@@ -59,6 +59,7 @@ public class MainActivity extends ActionBarActivity {
         // Crear BD
         db = openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
         db.execSQL("CREATE TABLE IF NOT EXISTS obres_preferides(id VARCHAR);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS consulta_nfc(id VARCHAR);");
         db.execSQL("INSERT into obres_preferides(id) values('1')");
 
 
@@ -77,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
         txtTagContent = (EditText) findViewById(R.id.txtTagContent);
 
         if (nfcAdapter != null && nfcAdapter.isEnabled()) {
-            Toast.makeText(this, "NFC disponible!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "NFC disponible :)", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "NFC no disponible :(", Toast.LENGTH_LONG).show();
         }
@@ -85,11 +86,11 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Toast.makeText(this, "NFC intent recibido!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "NFC intent recibido!", Toast.LENGTH_LONG).show();
         super.onNewIntent(intent);
 
         if (intent.hasExtra((NfcAdapter.EXTRA_TAG))) {
-            Toast.makeText(this, "NfcIntent!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "NfcIntent!", Toast.LENGTH_SHORT).show();
 
             if (tglReadWrite.isChecked())
             {
@@ -97,7 +98,8 @@ public class MainActivity extends ActionBarActivity {
 
                 if (parcelables != null && parcelables.length > 0)
                 {
-                    readTextFromMessage((NdefMessage) parcelables[0]);
+                    consultaObraPerNFC((NdefMessage) parcelables[0]);
+                    //readTextFromMessage((NdefMessage) parcelables[0]);
                 } else {
                     Toast.makeText(this, "No NDEF messages found!", Toast.LENGTH_SHORT).show();
                 }
@@ -122,6 +124,25 @@ public class MainActivity extends ActionBarActivity {
             String tagContent = getTextFromNdefRecord(ndefRecord);
 
             txtTagContent.setText(tagContent);
+
+        } else {
+            Toast.makeText(this, "No NDEF records found!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void consultaObraPerNFC(NdefMessage ndefMessage) {
+        NdefRecord[] ndefRecords = ndefMessage.getRecords();
+
+        if (ndefRecords != null && ndefRecords.length > 0) {
+
+            NdefRecord ndefRecord = ndefRecords[0];
+
+            String tagContent = getTextFromNdefRecord(ndefRecord);
+            db.execSQL("DELETE FROM consulta_nfc");
+            db.execSQL("INSERT into consulta_nfc(id) values('"+tagContent+"')");
+            Intent nuevoform = new Intent(MainActivity.this, NfcActivity.class);
+            startActivity(nuevoform);
+            //txtTagContent.setText(tagContent);
 
         } else {
             Toast.makeText(this, "No NDEF records found!", Toast.LENGTH_SHORT).show();
