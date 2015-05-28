@@ -1,22 +1,23 @@
 package com.example.david.museu;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Iterator;
 
@@ -32,15 +33,58 @@ public class NfcActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nfc);
         db=openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
-
         Cursor c=db.rawQuery("SELECT id FROM consulta_nfc",null);
         if(c.moveToNext()) {
             idnfc = c.getString(0).toString();
         }
         WebView wv = (WebView) findViewById(R.id.webViewNFC);
+        //Enable Javascript
+        wv.getSettings().setJavaScriptEnabled(true);
+        //Inject WebAppInterface methods into Web page by having Interface name 'Android'
+        wv.addJavascriptInterface(new WebAppInterface(this), "Android");
+        //Load URL inside WebView
         String url = "https://museumalacarte-bustawin.c9.io/artworks?beacon=";
         url = url + idnfc;
         wv.loadUrl(url);
     }
 
+    public class WebAppInterface {
+        Context mContext;
+        SQLiteDatabase db;
+        /** Instantiate the interface and set the context */
+        WebAppInterface(Context c) {
+            mContext = c;
+            db=openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
+        }
+
+        /** Show a toast from the web page */
+        @JavascriptInterface
+        public boolean setFavorite(int id) {
+
+            boolean setFavorite = false;
+            boolean existeixObra = false;
+            Cursor c=db.rawQuery("SELECT id FROM obres_preferides WHERE id = '"+id+"'",null);
+            while(c.moveToNext()) {
+                if (c.getString(0).toString().equals(String.valueOf(id))) {
+                    existeixObra = true;
+                };
+            }
+            if (!existeixObra) {
+                db.execSQL("INSERT into obres_preferides(id) values('" + id + "')");
+                setFavorite = true;
+            }
+            return setFavorite;
+        }
+
+        public boolean unsetFavorite(int id) {
+            boolean unsetFavorite = false;
+            Cursor c=db.rawQuery("SELECT id FROM obres_preferides WHERE id = '"+id+"'",null);
+            while(c.moveToNext()) {
+                if (c.getString(0).toString().equals(String.valueOf(id))) {
+                    db.execSQL("DELETE FROM obres_preferides WHERE id = '" + id + "'");
+                };
+            }
+            return unsetFavorite;
+        }
+    }
 }
