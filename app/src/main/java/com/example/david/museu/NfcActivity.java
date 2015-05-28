@@ -1,11 +1,13 @@
 package com.example.david.museu;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -30,6 +32,7 @@ public class NfcActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nfc);
         db=openOrCreateDatabase("Database", Context.MODE_PRIVATE, null);
+
         Cursor c=db.rawQuery("SELECT id FROM consulta_nfc",null);
         if(c.moveToNext()) {
             idnfc = c.getString(0).toString();
@@ -39,4 +42,5 @@ public class NfcActivity extends ActionBarActivity {
         url = url + idnfc;
         wv.loadUrl(url);
     }
+
 }
