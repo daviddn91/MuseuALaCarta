@@ -18,6 +18,7 @@ public class PreferidesActivity extends ActionBarActivity {
 
     SQLiteDatabase db;
     ArrayList<String> ids = new ArrayList();
+    WebView wv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +28,7 @@ public class PreferidesActivity extends ActionBarActivity {
         while(c.moveToNext()) {
             ids.add(c.getString(0).toString());
         }
-        WebView wv = (WebView) findViewById(R.id.webView);
+        wv = (WebView) findViewById(R.id.webView);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.setWebChromeClient(new WebChromeClient());
         wv.addJavascriptInterface(new WebAppInterface(this), "Android");
@@ -75,7 +76,7 @@ public class PreferidesActivity extends ActionBarActivity {
             }
             return setFavorite;
         }
-
+        @JavascriptInterface
         public boolean unsetFavorite(int id) {
             Toast.makeText(mContext, "Entra a la funcio d'esborrar preferit l'obra "+id, Toast.LENGTH_LONG).show();
             boolean unsetFavorite = false;
@@ -88,7 +89,7 @@ public class PreferidesActivity extends ActionBarActivity {
             }
             return unsetFavorite;
         }
-
+        @JavascriptInterface
         public boolean isFavorite(int id) {
             Toast.makeText(mContext, "Entra a la funcio isFavorite", Toast.LENGTH_LONG).show();
             boolean isFavorite = false;
@@ -96,6 +97,7 @@ public class PreferidesActivity extends ActionBarActivity {
             while(c.moveToNext()) {
                 if (c.getString(0).toString().equals(String.valueOf(id))) {
                     isFavorite = true;
+                    wv.loadUrl("javascript:favorited(1);");
                     Toast.makeText(mContext, "Entra a la funcio isFavorite = true", Toast.LENGTH_LONG).show();
                 };
             }
