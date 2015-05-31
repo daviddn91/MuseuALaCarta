@@ -50,6 +50,7 @@ public class NfcActivity extends ActionBarActivity {
         url = url + idnfc;
         wv.clearCache(true);
         wv.loadUrl(url);
+        //wv.loadUrl("javascript:favorited(1);");
     }
 
     public class WebAppInterface {
@@ -95,15 +96,12 @@ public class NfcActivity extends ActionBarActivity {
         }
         @JavascriptInterface
         public boolean isFavorite(int id) {
-            Toast.makeText(mContext, "Entra a la funcio isFavorite", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Entra a la funcio isFavorite amb id: " + id, Toast.LENGTH_LONG).show();
             boolean isFavorite = false;
             Cursor c=db.rawQuery("SELECT id FROM obres_preferides WHERE id = '"+id+"'",null);
-            while(c.moveToNext()) {
-                if (c.getString(0).toString().equals(String.valueOf(id))) {
-                    isFavorite = true;
-                    wv.loadUrl("javascript:favorited(1);");
-                    Toast.makeText(mContext, "Entra a la funcio isFavorite = true", Toast.LENGTH_LONG).show();
-                };
+            if (c.getCount() > 0) {
+                isFavorite = true;
+                Toast.makeText(mContext, "Entra a la funcio isFavorite = true " + id, Toast.LENGTH_LONG).show();
             }
             return isFavorite;
         }

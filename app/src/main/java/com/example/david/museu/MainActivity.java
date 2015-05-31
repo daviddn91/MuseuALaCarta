@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
@@ -68,8 +69,15 @@ public class MainActivity extends ActionBarActivity {
         boton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent nuevoform = new Intent(MainActivity.this, PreferidesActivity.class);
-                startActivity(nuevoform);
+                Cursor c=db.rawQuery("SELECT id FROM obres_preferides",null);
+                if (c.getCount() > 0) {
+                    Intent nuevoform = new Intent(MainActivity.this, PreferidesActivity.class);
+                    startActivity(nuevoform);
+                }
+                else {
+                    // Aqui popup que diga que no hay preferidas
+                    senseObresPreferides();
+                }
             }
         });
 
@@ -82,6 +90,10 @@ public class MainActivity extends ActionBarActivity {
         } else {
             Toast.makeText(this, "NFC no disponible :(", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void senseObresPreferides() {
+            Toast.makeText(this, "No tens cap obra preferida", Toast.LENGTH_SHORT).show();
     }
 
     @Override
