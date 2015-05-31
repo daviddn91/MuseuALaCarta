@@ -46,6 +46,7 @@ public class PreferidesActivity extends ActionBarActivity {
         }
         wv.clearCache(true);
         wv.loadUrl(url);
+        wv.loadUrl("javascript:favorited(1);");
     }
 
     public class WebAppInterface {
@@ -97,7 +98,6 @@ public class PreferidesActivity extends ActionBarActivity {
             if (c.getCount() > 0) {
                 isFavorite = true;
                 Toast.makeText(mContext, "Entra a la funcio isFavorite = true " + id, Toast.LENGTH_LONG).show();
-                wv.loadUrl("javascript:favorited('1');");
             }
             return isFavorite;
         }
