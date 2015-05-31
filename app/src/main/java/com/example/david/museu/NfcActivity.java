@@ -60,7 +60,7 @@ public class NfcActivity extends ActionBarActivity {
         /** Show a toast from the web page */
         @JavascriptInterface
         public boolean setFavorite(int id) {
-            
+
             boolean setFavorite = false;
             boolean existeixObra = false;
             Cursor c=db.rawQuery("SELECT id FROM obres_preferides WHERE id = '"+id+"'",null);
