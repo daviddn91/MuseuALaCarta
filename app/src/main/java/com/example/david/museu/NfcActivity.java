@@ -29,6 +29,7 @@ public class NfcActivity extends ActionBarActivity {
     private TextView tv;
     SQLiteDatabase db;
     String idnfc = null;
+    WebView wv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +39,7 @@ public class NfcActivity extends ActionBarActivity {
         if(c.moveToNext()) {
             idnfc = c.getString(0).toString();
         }
-        WebView wv = (WebView) findViewById(R.id.webViewNFC);
+        wv = (WebView) findViewById(R.id.webViewNFC);
         //Enable Javascript
         wv.getSettings().setJavaScriptEnabled(true);
         wv.setWebChromeClient(new WebChromeClient());
@@ -79,7 +80,7 @@ public class NfcActivity extends ActionBarActivity {
             }
             return setFavorite;
         }
-
+        @JavascriptInterface
         public boolean unsetFavorite(int id) {
             Toast.makeText(mContext, "Entra a la funcio d'esborrar preferit l'obra "+id, Toast.LENGTH_LONG).show();
             boolean unsetFavorite = false;
@@ -92,7 +93,7 @@ public class NfcActivity extends ActionBarActivity {
             }
             return unsetFavorite;
         }
-
+        @JavascriptInterface
         public boolean isFavorite(int id) {
             Toast.makeText(mContext, "Entra a la funcio isFavorite", Toast.LENGTH_LONG).show();
             boolean isFavorite = false;
@@ -100,6 +101,7 @@ public class NfcActivity extends ActionBarActivity {
             while(c.moveToNext()) {
                 if (c.getString(0).toString().equals(String.valueOf(id))) {
                     isFavorite = true;
+                    wv.loadUrl("javascript:favorited(1);");
                     Toast.makeText(mContext, "Entra a la funcio isFavorite = true", Toast.LENGTH_LONG).show();
                 };
             }
