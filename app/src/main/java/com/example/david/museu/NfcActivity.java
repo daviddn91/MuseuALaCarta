@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -40,11 +41,13 @@ public class NfcActivity extends ActionBarActivity {
         WebView wv = (WebView) findViewById(R.id.webViewNFC);
         //Enable Javascript
         wv.getSettings().setJavaScriptEnabled(true);
+        wv.setWebChromeClient(new WebChromeClient());
         //Inject WebAppInterface methods into Web page by having Interface name 'Android'
         wv.addJavascriptInterface(new WebAppInterface(this), "Android");
         //Load URL inside WebView
         String url = "https://museumalacarte-bustawin.c9.io/artworks?beacon=";
         url = url + idnfc;
+        wv.clearCache(true);
         wv.loadUrl(url);
     }
 

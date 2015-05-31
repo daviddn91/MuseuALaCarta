@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +29,7 @@ public class PreferidesActivity extends ActionBarActivity {
         }
         WebView wv = (WebView) findViewById(R.id.webView);
         wv.getSettings().setJavaScriptEnabled(true);
+        wv.setWebChromeClient(new WebChromeClient());
         wv.addJavascriptInterface(new WebAppInterface(this), "Android");
         String url = "https://museumalacarte-bustawin.c9.io/artworks?";
         Iterator it = ids.iterator();
@@ -40,6 +43,7 @@ public class PreferidesActivity extends ActionBarActivity {
                 url = url + "&id[]=" + it.next().toString();
             }
         }
+        wv.clearCache(true);
         wv.loadUrl(url);
     }
 
