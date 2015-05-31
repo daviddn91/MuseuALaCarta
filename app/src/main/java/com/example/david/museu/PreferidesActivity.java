@@ -96,8 +96,8 @@ public class PreferidesActivity extends ActionBarActivity {
             Cursor c=db.rawQuery("SELECT id FROM obres_preferides WHERE id = '"+id+"'",null);
             if (c.getCount() > 0) {
                 isFavorite = true;
-                wv.loadUrl("javascript:favorited(1);");
                 Toast.makeText(mContext, "Entra a la funcio isFavorite = true " + id, Toast.LENGTH_LONG).show();
+                wv.loadUrl("javascript:favorited(1);");
             }
             return isFavorite;
         }
