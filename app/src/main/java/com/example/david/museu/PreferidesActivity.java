@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class PreferidesActivity extends ActionBarActivity {
         }
         wv = (WebView) findViewById(R.id.webView);
         wv.getSettings().setJavaScriptEnabled(true);
+        wv.setWebViewClient(new WebViewClient());
         wv.setWebChromeClient(new WebChromeClient());
         wv.addJavascriptInterface(new WebAppInterface(this), "Android");
         String url = "https://museumalacarte-bustawin.c9.io/artworks?";
@@ -46,7 +48,6 @@ public class PreferidesActivity extends ActionBarActivity {
         }
         wv.clearCache(true);
         wv.loadUrl(url);
-        wv.loadUrl("javascript:favorited(1);");
     }
 
     public class WebAppInterface {
@@ -98,6 +99,14 @@ public class PreferidesActivity extends ActionBarActivity {
             if (c.getCount() > 0) {
                 isFavorite = true;
                 Toast.makeText(mContext, "Entra a la funcio isFavorite = true " + id, Toast.LENGTH_LONG).show();
+
+                wv.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        wv.evaluateJavascript("favorited(1);", null);
+                    }
+                });
+
             }
             return isFavorite;
         }

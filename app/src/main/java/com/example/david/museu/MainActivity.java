@@ -182,11 +182,11 @@ public class MainActivity extends ActionBarActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         IntentFilter[] intentFilters = new IntentFilter[]{};
 
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters, null);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters, null); //@todo nfc
     }
 
     private void disableForegroundDispatchSystem() {
-        nfcAdapter.disableForegroundDispatch(this);
+        nfcAdapter.disableForegroundDispatch(this); //@todo nfc
     }
 
     private void formatTag(Tag tag, NdefMessage ndefMessage) {
