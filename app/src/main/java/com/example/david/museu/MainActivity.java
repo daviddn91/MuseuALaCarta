@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
     SQLiteDatabase db;
     NfcAdapter nfcAdapter;
     EditText txtTagContent;
+    Boolean teNfc = false;
 
     ToggleButton tglReadWrite;
 
@@ -86,6 +87,7 @@ public class MainActivity extends ActionBarActivity {
         txtTagContent = (EditText) findViewById(R.id.txtTagContent);
 
         if (nfcAdapter != null && nfcAdapter.isEnabled()) {
+            teNfc = true;
             Toast.makeText(this, "NFC disponible :)", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "NFC no disponible :(", Toast.LENGTH_LONG).show();
@@ -181,11 +183,12 @@ public class MainActivity extends ActionBarActivity {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         IntentFilter[] intentFilters = new IntentFilter[]{};
-
+        if (teNfc)
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters, null); //@todo nfc
     }
 
     private void disableForegroundDispatchSystem() {
+        if (teNfc)
         nfcAdapter.disableForegroundDispatch(this); //@todo nfc
     }
 
